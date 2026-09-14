@@ -131,7 +131,7 @@ export function AuthModal({ isOpen, onClose, onLogin, initialTab = 'user' }) {
                 <input
                   type="email"
                   required
-                  autoComplete="email"
+                  autoComplete="off"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email..."
@@ -147,7 +147,7 @@ export function AuthModal({ isOpen, onClose, onLogin, initialTab = 'user' }) {
                 <input
                   type="password"
                   required
-                  autoComplete={isRegister ? 'new-password' : 'current-password'}
+                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
@@ -169,7 +169,7 @@ export function AuthModal({ isOpen, onClose, onLogin, initialTab = 'user' }) {
           <div className="text-center pt-2 flex flex-col gap-2">
             <button
               type="button"
-              onClick={() => { setIsAdminLogin(!isAdminLogin); setError(''); }}
+              onClick={() => { setIsAdminLogin(!isAdminLogin); setError(''); setEmail(''); setPassword(''); }}
               className="text-xs font-bold text-rose-600 hover:underline"
             >
               {isAdminLogin ? 'Switch to Standard User Login' : 'Switch to Master Admin Login'} 
