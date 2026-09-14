@@ -3,7 +3,7 @@
  * Handles multipart form uploads, JSON payloads, progress callbacks, and blob downloads.
  */
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://krishna-pdf-backend.onrender.com/api';;
 
 export const apiClient = {
   /**
@@ -52,7 +52,7 @@ export const apiClient = {
       };
 
       xhr.onerror = () => {
-        reject(new Error('Network error occurred. Please check your connection and ensure the Python backend is running on port 8000.'));
+        reject(new Error('Network error occurred. Please check your connection and ensure the Python backend is running.'));
       };
 
       xhr.send(formData);
