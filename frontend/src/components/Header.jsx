@@ -1,7 +1,7 @@
 import React from 'react';
 import { Shield, Cpu, Wifi, FileText, ArrowLeft, User, LogOut, ShieldAlert } from 'lucide-react';
 
-export function Header({ activeTool, onSelectTool, currentUser, onOpenAuth, onOpenAccount, onLogout, onOpenAdminAuth }) {
+export function Header({ activeTool, onSelectTool, currentUser, onOpenAuth, onOpenAccount, onLogout }) {
   const isAdmin = currentUser && (currentUser.email === 'hetpatel1533@gmail.com' || currentUser.isAdmin);
 
   return (
@@ -55,15 +55,6 @@ export function Header({ activeTool, onSelectTool, currentUser, onOpenAuth, onOp
             </button>
           )}
 
-          {!currentUser && (
-            <button
-              onClick={onOpenAdminAuth}
-              className="px-3 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold shadow-md transition-all flex items-center gap-1.5"
-            >
-              <ShieldAlert className="w-3.5 h-3.5" /> Admin Login
-            </button>
-          )}
-
           {currentUser ? (
             <div className="flex items-center space-x-2">
               <button
@@ -84,7 +75,7 @@ export function Header({ activeTool, onSelectTool, currentUser, onOpenAuth, onOp
           ) : (
             <button
               onClick={onOpenAuth}
-              className="px-3 sm:px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-md transition-all"
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-md transition-all"
             >
               Sign In / Register
             </button>
