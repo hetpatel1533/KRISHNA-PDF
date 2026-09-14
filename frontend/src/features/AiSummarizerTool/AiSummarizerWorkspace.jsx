@@ -23,7 +23,7 @@ export function AiSummarizerWorkspace({ currentUser, onRequireAuth, onBack }) {
     if (!file) return;
     const currentKey = currentUser?.geminiApiKey || apiKey;
     if (!currentKey || (!currentKey.startsWith('AQ') && !currentKey.startsWith('AIza'))) {
-      setError('A valid Google Gemini API Key (starting with AQ... or AIza...) is strictly required in your profile vault for AI Summarization.');
+      setError('A valid Google Gemini API Key (starting with AQ... or AIza...) is required in your profile vault for AI Summarization.');
       return;
     }
 
@@ -101,7 +101,7 @@ export function AiSummarizerWorkspace({ currentUser, onRequireAuth, onBack }) {
           </div>
 
           <div className="bg-purple-50/70 border border-purple-100 rounded-2xl p-5 space-y-3 text-xs text-slate-700">
-            <h4 className="font-bold text-purple-900">How to create and get your Gemini API key:</h4>
+            <h4 className="font-bold text-purple-900">How to get your Gemini API key:</h4>
             <ol className="list-decimal list-inside space-y-1.5">
               <li>
                 Go to Google AI Studio:{' '}
@@ -115,9 +115,7 @@ export function AiSummarizerWorkspace({ currentUser, onRequireAuth, onBack }) {
                 </a>
               </li>
               <li>Create an account or sign in with your Google credentials.</li>
-              <li>Navigate to your Dashboard.</li>
-              <li>Click on the <strong>API Key</strong> section on the left sidebar.</li>
-              <li>Click <strong>Create new API key</strong> and copy it.</li>
+              <li>Click on the <strong>API Key</strong> section and create a new key.</li>
               <li>Paste your key below to unlock the AI Summarizer.</li>
             </ol>
           </div>
@@ -136,10 +134,9 @@ export function AiSummarizerWorkspace({ currentUser, onRequireAuth, onBack }) {
                 if (apiKey.trim() && (apiKey.startsWith('AQ') || apiKey.startsWith('AIza'))) {
                   const updated = { ...currentUser, geminiApiKey: apiKey.trim() };
                   const usersDb = JSON.parse(localStorage.getItem('agent_krishna_users_db') || '{}');
-                  if (usersDb[currentUser.email]) {
-                    usersDb[currentUser.email] = updated;
-                    localStorage.setItem('agent_krishna_users_db', JSON.stringify(usersDb));
-                  }
+                  usersDb[currentUser.email] = updated;
+                  localStorage.setItem('agent_krishna_users_db', JSON.stringify(usersDb));
+                  localStorage.setItem('agent_krishna_user', JSON.stringify(updated));
                   window.location.reload();
                 } else {
                   alert('Please enter a valid Gemini API key starting with AQ or AIza.');
@@ -169,7 +166,7 @@ export function AiSummarizerWorkspace({ currentUser, onRequireAuth, onBack }) {
             </div>
             <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">AI PDF Summarizer & Insights</h2>
             <p className="text-slate-600 mt-2 max-w-lg mx-auto">
-              Extract key executive takeaways, statistics, and summaries instantly with high-performance document intelligence.
+              Extract key executive takeaways, statistics, and summaries instantly with high-performance document intelligence powered by Gemini LLM.
             </p>
           </div>
           <FileUploadZone 
@@ -288,7 +285,7 @@ export function AiSummarizerWorkspace({ currentUser, onRequireAuth, onBack }) {
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 space-y-3 py-12">
               <Sparkles className="w-12 h-12 text-slate-300" />
-              <p className="text-sm font-medium">Click &quot;Generate Summary&quot; to extract key document insights.</p>
+              <p className="text-sm font-medium">Click &quot;Generate Summary&quot; to extract real-time document insights via Gemini LLM.</p>
             </div>
           )}
         </div>

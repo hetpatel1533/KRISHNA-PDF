@@ -43,7 +43,6 @@ export function AdminWorkspace({ currentUser, onRequireAuth, onNotify, onBack })
     { id: 'organizer', name: 'Page Organizer' },
     { id: 'editor', name: 'PDF Editor' },
     { id: 'unlock', name: 'Unlock PDF' },
-    { id: 'translate', name: 'Translate PDF' },
     { id: 'page-numbers', name: 'Add Page Numbers' },
     { id: 'pdf-to-jpg', name: 'PDF to JPG' },
     { id: 'security', name: 'Security & Watermark' },
@@ -218,12 +217,6 @@ Deployable offline-ready FastAPI + React PDF Suite.
     e.preventDefault();
     if (!aiMenuPrompt.trim()) return;
 
-    const key = currentUser?.geminiApiKey;
-    if (!key || (!key.startsWith('AQ') && !key.startsWith('AIza'))) {
-      alert('Error: A valid Google Gemini API Key (starting with AQ... or AIza...) is required in your Account & API Vault to scaffold and compile autonomous AI features.');
-      return;
-    }
-
     setIsGeneratingMenu(true);
     setGeneratedMenuResult(null);
 
@@ -256,12 +249,6 @@ Deployable offline-ready FastAPI + React PDF Suite.
   const handleModifyExistingMenu = (e) => {
     e.preventDefault();
     if (!modifierPrompt.trim()) return;
-
-    const key = currentUser?.geminiApiKey;
-    if (!key || (!key.startsWith('AQ') && !key.startsWith('AIza'))) {
-      alert('Error: A valid Google Gemini API Key is required in your Account & API Vault to run the AI Menu Modifier Agent.');
-      return;
-    }
 
     setIsModifyingMenu(true);
     setModificationResult(null);

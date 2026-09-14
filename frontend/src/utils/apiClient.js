@@ -3,7 +3,7 @@
  * Handles multipart form uploads, JSON payloads, progress callbacks, and blob downloads.
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://krishna-pdf-backend.onrender.com/api';;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 export const apiClient = {
   /**
@@ -18,7 +18,13 @@ export const apiClient = {
       const xhr = new XMLHttpRequest();
       const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
       xhr.open('POST', `${API_BASE_URL}${cleanEndpoint}`, true);
-      xhr.responseType = 'blob';
+      
+      // Do not force responseType = 'blob' for JSON endpoints like /ai/summarize
+      if (cleanEndpoint.includes('/ai/summarize')) {
+        xhr.responseType = 'text';
+      } else {
+        xhr.responseType = 'blob';
+      }
 
       if (onProgress && xhr.upload) {
         xhr.upload.onprogress = (event) => {
@@ -31,10 +37,16 @@ export const apiClient = {
 
       xhr.onload = async () => {
         if (xhr.status >= 200 && xhr.status < 300) {
-          resolve(xhr.response);
+          if (cleanEndpoint.includes('/ai/summarize')) {
+            // Return Blob from text for JSON endpoints so downstream parsing works uniformly
+            const blob = new Blob([xhr.response], { type: 'application/json' });
+            resolve(blob);
+          } else {
+            resolve(xhr.response);
+          }
         } else {
           try {
-            const text = await new Response(xhr.response).text();
+            const text = typeof xhr.response === 'string' ? xhr.response : await new Response(xhr.response).text();
             let errorMessage = `Request failed with status ${xhr.status}`;
             try {
               const errorJson = JSON.parse(text);

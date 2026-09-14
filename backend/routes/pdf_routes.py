@@ -13,7 +13,6 @@ from services.signature_service import SignatureService
 from services.organizer_security_service import OrganizerSecurityService
 from services.text_edit_service import TextEditService
 from services.editor_service import EditorService
-from services.ai_service import AiService
 
 router = APIRouter(tags=["PDF Operations"])
 
@@ -25,6 +24,26 @@ async def merge_pdfs_endpoint(files: List[UploadFile] = File(...)):
         file_bytes_list = [await f.read() for f in files]
         merged_pdf_bytes = MergeService.merge_pdfs(file_bytes_list)
         return Response(content=merged_pdf_bytes, media_type="application/pdf", headers={"Content-Disposition": 'attachment; filename="merged.pdf"'})
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/repair")
+async def repair_pdf_endpoint(file: UploadFile = File(...)):
+    try:
+        content = await file.read()
+        repaired_bytes = OrganizerSecurityService.repair_pdf(content)
+        return Response(content=repaired_bytes, media_type="application/pdf", headers={"Content-Disposition": 'attachment; filename="repaired.pdf"'})
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/convert-to-markdown")
+async def convert_to_markdown_endpoint(file: UploadFile = File(...)):
+    try:
+        content = await file.read()
+        md_text = OrganizerSecurityService.convert_to_markdown(content)
+        return Response(content=md_text, media_type="text/markdown", headers={"Content-Disposition": 'attachment; filename="document.md"'})
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
@@ -44,8 +63,6 @@ async def split_pdf_endpoint(
             zip_bytes = SplitService.split_pdf_fixed(content, every_n)
             return Response(content=zip_bytes, media_type="application/zip", headers={"Content-Disposition": 'attachment; filename="split_fixed.zip"'})
         elif "," in active_range or "-" in active_range or mode == "ranges":
-            doc = fitz.open(stream=content, filetype="pdf")
-            doc.close()
             range_list = [r.strip() for r in active_range.split(",") if r.strip()]
             zip_bytes = SplitService.split_pdf_by_ranges(content, range_list)
             return Response(content=zip_bytes, media_type="application/zip", headers={"Content-Disposition": 'attachment; filename="split_ranges.zip"'})
@@ -238,44 +255,3 @@ async def redact_pdf_endpoint(file: UploadFile = File(...), keyword: Optional[st
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
-
-@router.post("/ai/summarize")
-@router.post("//ai/summarize/")
-async def ai_summarize_endpoint(
-    file: UploadFile = File(...), 
-    length: Optional[str] = Form("medium"), 
-    summary_length: Optional[str] = Form(None),
-    focus: Optional[str] = Form("general"),
-    gemini_key: Optional[str] = Form(None),
-    gemini_api_key: Optional[str] = Form(None)
-):
-    try:
-        content = await file.read()
-        active_length = str(length or summary_length or "medium")
-        active_focus = str(focus or "general")
-        key = str(gemini_key or gemini_api_key or "")
-        summary_result = AiService.summarize_pdf(content, summary_length=active_length, focus=active_focus, api_key=key)
-        return JSONResponse(content=summary_result)
-    except Exception as e:
-        traceback.print_exc()
-        return JSONResponse(status_code=400, content={"detail": str(e)})
-
-@router.post("/ai/translate")
-@router.post("/ai/translate/")
-async def ai_translate_endpoint(
-    file: UploadFile = File(...), 
-    target_language: Optional[str] = Form("hi"),
-    target_lang: Optional[str] = Form(None),
-    language: Optional[str] = Form(None),
-    gemini_key: Optional[str] = Form(None),
-    gemini_api_key: Optional[str] = Form(None)
-):
-    try:
-        content = await file.read()
-        active_lang = str(target_language or target_lang or language or "hi")
-        key = str(gemini_key or gemini_api_key or "")
-        translated_bytes = AiService.translate_pdf(content, target_language=active_lang, api_key=key)
-        return Response(content=translated_bytes, media_type="application/pdf", headers={"Content-Disposition": f'attachment; filename="translated_{active_lang}.pdf"'})
-    except Exception as e:
-        traceback.print_exc()
-        return JSONResponse(status_code=400, content={"detail": str(e)})

@@ -62,6 +62,46 @@ class OrganizerSecurityService:
         return output.getvalue()
 
     @staticmethod
+    def repair_pdf(file_bytes: bytes) -> bytes:
+        try:
+            doc = fitz.open(stream=file_bytes, filetype="pdf")
+            output = io.BytesIO()
+            doc.save(output, garbage=4, deflate=True, clean=True)
+            doc.close()
+            output.seek(0)
+            return output.read()
+        except Exception as e:
+            try:
+                # Fallback lenient recovery
+                doc = fitz.open()
+                temp_doc = fitz.open(stream=file_bytes, filetype="pdf")
+                for page in temp_doc:
+                    doc.insert_pdf(temp_doc, from_page=page.number, to_page=page.number)
+                output = io.BytesIO()
+                doc.save(output)
+                doc.close()
+                temp_doc.close()
+                output.seek(0)
+                return output.read()
+            except Exception as inner_e:
+                raise RuntimeError(f"Failed to repair PDF: {str(e)} | Fallback: {str(inner_e)}")
+
+    @staticmethod
+    def convert_to_markdown(file_bytes: bytes) -> str:
+        doc = fitz.open(stream=file_bytes, filetype="pdf")
+        md_lines = []
+        for i, page in enumerate(doc):
+            md_lines.append(f"# Page {i + 1}\n")
+            text = page.get_text("text")
+            for line in text.splitlines():
+                clean_line = line.strip()
+                if clean_line:
+                    md_lines.append(f"{clean_line}\n")
+            md_lines.append("\n---\n")
+        doc.close()
+        return "\n".join(md_lines)
+
+    @staticmethod
     def organize_pdf(file_bytes: bytes, operations: List[Dict[str, Any]]) -> bytes:
         doc = fitz.open(stream=file_bytes, filetype="pdf")
         new_doc = fitz.open()
@@ -89,11 +129,9 @@ class OrganizerSecurityService:
     @staticmethod
     def ocr_pdf(file_bytes: bytes) -> bytes:
         doc = fitz.open(stream=file_bytes, filetype="pdf")
-        # PyMuPDF built-in OCR / searchable PDF generation or robust text embedding fallback
         output = io.BytesIO()
         for page in doc:
             try:
-                # Attempt PyMuPDF OCR wrapper if available
                 tp = page.get_textpage_ocr()
                 if tp:
                     pass

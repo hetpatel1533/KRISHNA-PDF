@@ -15,12 +15,12 @@ import {
   Unlock,
   Image as ImageIcon,
   Edit3,
-  Globe,
   ShieldAlert,
-  FileText,
   Eraser,
   ScanText,
-  EyeOff
+  EyeOff,
+  Wrench,
+  FileText
 } from 'lucide-react';
 
 export function Dashboard({ onSelectTool, currentUser }) {
@@ -44,24 +44,24 @@ export function Dashboard({ onSelectTool, currentUser }) {
 
   const defaultTools = [
     {
-      id: 'ai-summarizer',
-      name: 'AI Summarizer',
-      description: 'Summarize PDF reports, essays, and study guides with AI-powered executive takeaways.',
-      icon: Sparkles,
-      color: 'from-purple-500 to-indigo-600',
-      badge: 'AI Powered',
-      lightBg: 'bg-purple-50 text-purple-700 border-purple-100',
-      accentColor: '#8B5CF6'
+      id: 'repair',
+      name: 'Repair PDF',
+      description: 'Upload a corrupt PDF and we will try to fix it. Recover partial or complete document streams successfully.',
+      icon: Wrench,
+      color: 'from-amber-600 to-orange-600',
+      badge: 'Recovery',
+      lightBg: 'bg-amber-50 text-amber-700 border-amber-100',
+      accentColor: '#D97706'
     },
     {
-      id: 'translate',
-      name: 'Translate PDF',
-      description: 'Translate PDF documents with AI into other languages while preserving original formatting.',
-      icon: Globe,
-      color: 'from-teal-500 to-emerald-600',
-      badge: 'AI Powered',
-      lightBg: 'bg-teal-50 text-teal-700 border-teal-100',
-      accentColor: '#14B8A6'
+      id: 'pdf-to-markdown',
+      name: 'PDF to Markdown',
+      description: 'Turn PDF into clean .md file in seconds. Headings, tables, and lists stay intact for LLMs.',
+      icon: FileText,
+      color: 'from-blue-600 to-teal-600',
+      badge: 'Converter',
+      lightBg: 'bg-blue-50 text-blue-700 border-blue-100',
+      accentColor: '#2563EB'
     },
     {
       id: 'ocr-pdf',
@@ -86,7 +86,7 @@ export function Dashboard({ onSelectTool, currentUser }) {
     {
       id: 'watermark-remover',
       name: 'Remove Watermark',
-      description: 'Automatically scan and remove text or image watermarks from PDF, Word, Image, and XML pages with live inspection preview.',
+      description: 'Automatically scan and remove text or image watermarks from PDF, Word, Image, and XML pages.',
       icon: Eraser,
       color: 'from-rose-500 to-orange-600',
       badge: 'Security',
@@ -106,7 +106,7 @@ export function Dashboard({ onSelectTool, currentUser }) {
     {
       id: 'editor',
       name: 'PDF Editor',
-      description: 'Edit PDF by adding text, shapes, comments and highlights. ILovePDF-grade visual PDF editor with true-text form filling.',
+      description: 'Edit PDF by adding text, shapes, comments and highlights. ILovePDF-grade visual PDF editor.',
       icon: Edit3,
       color: 'from-blue-600 to-indigo-600',
       badge: 'Interactive',

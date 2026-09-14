@@ -16,11 +16,11 @@ import { ConverterWorkspace } from './features/ConverterTool/ConverterWorkspace'
 import { UnlockWorkspace } from './features/UnlockTool/UnlockWorkspace';
 import { PageNumbersWorkspace } from './features/PageNumbersTool/PageNumbersWorkspace';
 import { PdfToJpgWorkspace } from './features/PdfToJpgTool/PdfToJpgWorkspace';
-import { AiTranslateWorkspace } from './features/AiTranslateTool/AiTranslateWorkspace';
-import { AiSummarizerWorkspace } from './features/AiSummarizerTool/AiSummarizerWorkspace';
 import { OcrWorkspace } from './features/OcrTool/OcrWorkspace';
 import { RedactWorkspace } from './features/RedactTool/RedactWorkspace';
 import { CustomFeatureWorkspace } from './features/CustomTool/CustomFeatureWorkspace';
+import { RepairWorkspace } from './features/RepairTool/RepairWorkspace';
+import { MarkdownWorkspace } from './features/MarkdownTool/MarkdownWorkspace';
 
 export function App() {
   const [activeTool, setActiveTool] = useState(null);
@@ -62,10 +62,10 @@ export function App() {
 
     switch (activeTool) {
       case 'admin': return <AdminWorkspace currentUser={currentUser} onRequireAuth={() => { setAuthModalInitialTab('admin'); setIsAuthModalOpen(true); }} onNotify={showNotification} onBack={() => setActiveTool(null)} />;
+      case 'repair': return <RepairWorkspace onBack={() => setActiveTool(null)} />;
+      case 'pdf-to-markdown': return <MarkdownWorkspace onBack={() => setActiveTool(null)} />;
       case 'editor': return <EditorWorkspace onBack={() => setActiveTool(null)} />;
       case 'unlock': return <UnlockWorkspace onBack={() => setActiveTool(null)} />;
-      case 'translate': return <AiTranslateWorkspace currentUser={currentUser} onRequireAuth={() => { setAuthModalInitialTab('user'); setIsAuthModalOpen(true); }} onBack={() => setActiveTool(null)} />;
-      case 'ai-summarizer': return <AiSummarizerWorkspace currentUser={currentUser} onRequireAuth={() => { setAuthModalInitialTab('user'); setIsAuthModalOpen(true); }} onBack={() => setActiveTool(null)} />;
       case 'ocr-pdf': return <OcrWorkspace currentUser={currentUser} onRequireAuth={() => { setAuthModalInitialTab('user'); setIsAuthModalOpen(true); }} onBack={() => setActiveTool(null)} />;
       case 'redact-pdf': return <RedactWorkspace currentUser={currentUser} onRequireAuth={() => { setAuthModalInitialTab('user'); setIsAuthModalOpen(true); }} onBack={() => setActiveTool(null)} />;
       case 'watermark-remover': return <WatermarkRemoverWorkspace onBack={() => setActiveTool(null)} />;
