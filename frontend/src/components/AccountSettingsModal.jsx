@@ -27,10 +27,16 @@ export function AccountSettingsModal({ isOpen, onClose, currentUser, onUpdateUse
     onUpdateUser(updated);
     
     const usersDb = JSON.parse(localStorage.getItem('agent_krishna_users_db') || '{}');
-    if (usersDb[currentUser.email]) {
-      usersDb[currentUser.email] = updated;
+    const cleanEmail = (currentUser.email || '').toLowerCase();
+    if (usersDb[cleanEmail]) {
+      usersDb[cleanEmail] = updated;
+      localStorage.setItem('agent_krishna_users_db', JSON.stringify(usersDb));
+    } else {
+      usersDb[cleanEmail] = updated;
       localStorage.setItem('agent_krishna_users_db', JSON.stringify(usersDb));
     }
+
+    localStorage.setItem('agent_krishna_user', JSON.stringify(updated));
 
     setIsEditingKey(false);
     setSuccessMsg('Profile and API Key vault updated successfully.');
@@ -44,7 +50,6 @@ export function AccountSettingsModal({ isOpen, onClose, currentUser, onUpdateUse
     setOtpCode('');
     setIsOtpModalOpen(true);
     
-    // Simulated professional email notification
     setEmailNotification({
       subject: 'Security Verification Code — Agent Krishna PDF Suite',
       sentAt: new Date().toLocaleTimeString(),
@@ -193,7 +198,8 @@ Agent Krishna Security Team`
               onClick={() => {
                 if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
                   const usersDb = JSON.parse(localStorage.getItem('agent_krishna_users_db') || '{}');
-                  delete usersDb[currentUser.email];
+                  const cleanEmail = (currentUser.email || '').toLowerCase();
+                  delete usersDb[cleanEmail];
                   localStorage.setItem('agent_krishna_users_db', JSON.stringify(usersDb));
                   onDeleteAccount();
                   onClose();
@@ -207,7 +213,6 @@ Agent Krishna Security Team`
         </div>
       </div>
 
-      {/* Professional Email OTP Verification Modal */}
       {isOtpModalOpen && (
         <div className="fixed inset-0 z-60 flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4 animate-fadeIn">
           <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden flex flex-col">
